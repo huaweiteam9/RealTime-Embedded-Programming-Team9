@@ -1,3 +1,50 @@
+project:test14.cpp
+
+#include <opencv2/opencv.hpp>
+#include <iostream>
+
+using namespace cv;
+using namespace std;
+
+int main() {
+    // 直接让摄像头输出 RGB
+    VideoCapture cap("libcamerasrc ! video/x-raw,format=RGB,width=640,height=480 ! videoconvert ! appsink", CAP_GSTREAMER);
+
+    if (!cap.isOpened()) {
+        cerr << "Error: Could not open camera!" << endl;
+        return -1;
+    }
+
+    while (true) {
+        Mat frame;
+        cap >> frame;  // 读取一帧
+
+        if (frame.empty()) {
+            cerr << "Error: Empty frame captured!" << endl;
+            break;
+        }
+
+        // 直接显示（不需要 cvtColor）
+        imshow("Camera Stream", frame);
+
+        if (waitKey(30) == 'q') {
+            break;
+        }
+    }
+
+    cap.release();
+    destroyAllWindows();
+    return 0;
+}
+
+
+
+
+
+
+
+
+
 feedback:./test14
 [2:29:26.640397342] [7966]  INFO Camera camera_manager.cpp:327 libcamera v0.4.0+50-83cb8101
 [2:29:26.647771478] [7969]  INFO RPI pisp.cpp:720 libpisp version v1.1.0 e7974a156008 27-01-2025 (21:50:51)
