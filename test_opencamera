@@ -1,0 +1,21 @@
+feedback:./test14
+[2:29:26.640397342] [7966]  INFO Camera camera_manager.cpp:327 libcamera v0.4.0+50-83cb8101
+[2:29:26.647771478] [7969]  INFO RPI pisp.cpp:720 libpisp version v1.1.0 e7974a156008 27-01-2025 (21:50:51)
+[2:29:26.669999035] [7969]  INFO RPI pisp.cpp:1179 Registered camera /base/axi/pcie@120000/rp1/i2c@88000/imx219@10 to CFE device /dev/media0 and ISP device /dev/media1 using PiSP variant BCM2712_C0
+[2:29:26.671946707] [7972]  INFO Camera camera.cpp:1202 configuring streams: (0) 640x480-BGR888
+[2:29:26.672121582] [7969]  INFO RPI pisp.cpp:1484 Sensor: /base/axi/pcie@120000/rp1/i2c@88000/imx219@10 - Selected sensor format: 640x480-SBGGR10_1X10 - Selected CFE format: 640x480-PC1B
+[ WARN:0@0.404] global ./modules/videoio/src/cap_gstreamer.cpp (1374) open OpenCV | GStreamer warning: unable to query duration of stream
+[ WARN:0@0.404] global ./modules/videoio/src/cap_gstreamer.cpp (1405) open OpenCV | GStreamer warning: Cannot query video position: status=0, value=-1, duration=-1
+QStandardPaths: wrong permissions on runtime directory /run/user/1000, 0770 instead of 0700
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+[2:34:53.081529708] [7969]  WARN V4L2 v4l2_videodevice.cpp:2150 /dev/video4[17:cap]: Dequeue timer of 1000000.00us has expired!
+[2:34:53.081576357] [7969] ERROR RPI pipeline_base.cpp:1367 Camera frontend has timed out!
+[2:34:53.081582487] [7969] ERROR RPI pipeline_base.cpp:1368 Please check that your camera sensor connector is attached securely.
+[2:34:53.081587024] [7969] ERROR RPI pipeline_base.cpp:1369 Alternatively, try another cable and/or sensor.
+
+** (test14:7966): CRITICAL **: 17:49:32.401: void GstLibcameraSrcState::requestCompleted(libcamera::Request*): assertion 'wrap->request_.get() == request' failed
+Segmentation fault
