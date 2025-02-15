@@ -1,6 +1,14 @@
+/***********
+加载模型文件：LoadModel
+使用opencv的imread函数读取图像，以此图像作为输入，使用模型对它进行识别
+Mat2Tensor把图像数据转化为TensorFlow能够识别的数据
+构建输入输出
+执行session
+获取结果
+************/
+
 #include "../utils/TFUtils.hpp"
 #include "utils/mat2tensor_c_cpi.h"
-
 #include <iostream>
 #include <vector>
 
