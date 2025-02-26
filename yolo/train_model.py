@@ -1,22 +1,12 @@
 from ultralytics import YOLO
-#import torch
-
-# check GPU
-#print(torch.cuda.get_device_name(0))
 import torch
 
-# 检查是否支持 MPS
-if torch.backends.mps.is_available():
-    device = torch.device("mps")
-    print("Using Metal (MPS) GPU acceleration!")
-else:
-    device = torch.device("cpu")
-    print("Using CPU!")
 
-print(f"PyTorch is using: {device}")
-# Load the model.
 model = YOLO('yolov8m.pt') # pretrained model 
- 
+# check GPU
+#print(torch.cuda.get_device_name(0))
+# Load the model.
+
 # Training.
 results = model.train(
    data='training.yaml',  # .yaml file 

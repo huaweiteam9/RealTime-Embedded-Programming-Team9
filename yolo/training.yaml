@@ -1,5 +1,5 @@
 # 数据集的根目录
-path: /Users/chen/Documents/yolo/darknet/FruitsData
+path: ./
 
 # 训练、验证和测试集的图像路径
 train: train
