@@ -6,6 +6,8 @@
 #include <iostream>
 
 
+using namespace std;
+
 class DemoTimer1 : public CppTimer {
 
 	void timerEvent() {
