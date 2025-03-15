@@ -39,87 +39,64 @@ class DemoTimer3 : public CppTimer {
 };
 
 
+bool stopThreads = false;
+
 void OpenCamera() {
-
-	while (1) {
-	
+	while (!stopThreads) {
 		cout << "open camera successfully" << endl;
-		
-
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
-
-
-
 }
-
 
 void DetectObject() {
-	while (1) {
-
+	while (!stopThreads) {
 		cout << "detect successfully" << endl;
-
-
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
-
-
 }
 
-
 void DataCollecting() {
-	while (1) {
-
+	while (!stopThreads) {
 		cout << "collect data successfully" << endl;
-
-
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
-
-
 }
 
 void QTshowing() {
-	while (1) {
-
+	while (!stopThreads) {
 		cout << "window shows successfully" << endl;
-
-
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
-
-
 }
 
 void task5() {
-	while (1) {
-
+	while (!stopThreads) {
 		cout << "task5 success" << endl;
-
-
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
-
-
 }
 
 void task6() {
-	while (1) {
-
+	while (!stopThreads) {
 		cout << "task6 success" << endl;
-
-
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
-
-
 }
 
-int main(int, const char**) {
+int main() {
+	// 创建线程
+	std::thread thread1(OpenCamera);
+	std::thread thread2(DetectObject);
+	std::thread thread3(DataCollecting);
+	std::thread thread4(QTshowing);
+	std::thread thread5(task5);
+	std::thread thread6(task6);
 
-	// create pthread
-	std::thread thread1(OpenCamera, 1);
-	std::thread thread2(DetectObject, 2);
-	std::thread thread3(DataCollecting, 3);
-	std::thread thread4(QTshowing, 4);
-	std::thread thread5(task5, 5);
-	std::thread thread6(task6, 6);
+	// 运行10秒后停止所有线程
+	std::this_thread::sleep_for(std::chrono::seconds(10));
+	stopThreads = true;
 
-	// wait 6 threads to complete
+	// 等待所有线程结束
 	thread1.join();
 	thread2.join();
 	thread3.join();
@@ -127,33 +104,6 @@ int main(int, const char**) {
 	thread5.join();
 	thread6.join();
 
-	std::cout << "all threads are over " << std::endl;
-	
-
-	
-	//pthread_t t1, t2, t3, t4, t5;
-
-	//create thread 1
-	//pthread_create（& t1, NULL,, NULL）;
-
-
-
-	//create thread 1
-	//pthread_create（& t1, NULL, opencamera, NULL）;
-
-	//create thread 2 
-	//pthread_create（& t2, NULL, opencamera, NULL）;
-
-	//pthread_join(t1, NULL);
-
-	//pthread_join(t2, NULL);
-
-	//return (0)
-
-
-
-
-
-
+	std::cout << "all threads are over" << std::endl;
 	return 0;
 }
