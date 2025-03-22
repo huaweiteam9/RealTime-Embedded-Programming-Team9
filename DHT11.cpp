@@ -1,110 +1,104 @@
+#include <gpiod.h>
 #include <iostream>
 #include <vector>
-#include <gpiod.h>
-#include <unistd.h>
 #include <chrono>
+#include <thread>
 
-#define GPIO_CHIP "gpiochip0"  // Raspberry Pi's default GPIO controller
-#define DHT_GPIO 17            // Using GPIO17 (physical pin 11)
+#define GPIO_CHIP_NAME "/dev/gpiochip0"
+#define DHT11_PIN 4  // GPIO4 (BCM 编号)
 
-// Function to read DHT11 data
-bool readDHT(std::vector<int>& data) {
-    struct gpiod_chip* chip;
-    struct gpiod_line* line;
-    int ret;
+class DHT11 {
+public:
+    DHT11(int pin) : pin_number(pin) {
+        chip = gpiod_chip_open(GPIO_CHIP_NAME);
+        if (!chip) {
+            throw std::runtime_error("Failed to open GPIO chip");
+        }
 
-    // Open GPIO controller
-    chip = gpiod_chip_open_by_name(GPIO_CHIP);
-    if (!chip) {
-        std::cerr << "Failed to open GPIO chip!" << std::endl;
-        return false;
-    }
-
-    // Get GPIO line
-    line = gpiod_chip_get_line(chip, DHT_GPIO);
-    if (!line) {
-        std::cerr << "Failed to get GPIO line!" << std::endl;
-        gpiod_chip_close(chip);
-        return false;
-    }
-
-    // Send start signal
-    ret = gpiod_line_request_output(line, "dht11", 0);
-    if (ret < 0) {
-        std::cerr << "Failed to set output mode!" << std::endl;
-        gpiod_chip_close(chip);
-        return false;
-    }
-
-    // Pull low for 18ms
-    gpiod_line_set_value(line, 0);
-    usleep(18000);
-    gpiod_line_set_value(line, 1);
-    usleep(40);
-
-    // Switch to input mode
-    ret = gpiod_line_request_input(line, "dht11");
-    if (ret < 0) {
-        std::cerr << "Failed to set input mode!" << std::endl;
-        gpiod_chip_close(chip);
-        return false;
-    }
-
-    // Wait for sensor response
-    auto start = std::chrono::steady_clock::now();
-    while (gpiod_line_get_value(line) == 1) {
-        auto now = std::chrono::steady_clock::now();
-        if (std::chrono::duration_cast<std::chrono::microseconds>(now - start).count() > 1000) {
-            std::cerr << "Sensor response timeout!" << std::endl;
-            gpiod_line_release(line);
-            gpiod_chip_close(chip);
-            return false;
+        line = gpiod_chip_get_line(chip, pin);
+        if (!line) {
+            throw std::runtime_error("Failed to get GPIO line");
         }
     }
 
-    // Read 40 bits of data
-    data.clear();
-    for (int i = 0; i < 40; i++) {
-        start = std::chrono::steady_clock::now();
-        while (gpiod_line_get_value(line) == 0) {}  // Wait for high level start
-
-        // Calculate high level duration
-        auto t_start = std::chrono::steady_clock::now();
-        while (gpiod_line_get_value(line) == 1) {}  // Wait for high level end
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(
-            std::chrono::steady_clock::now() - t_start
-        ).count();
-
-        data.push_back(duration > 30 ? 1 : 0);  // High level >30μs = logic 1
+    ~DHT11() {
+        if (chip) gpiod_chip_close(chip);
     }
 
-    // Release resources
-    gpiod_line_release(line);
-    gpiod_chip_close(chip);
-    return (data.size() == 40);
-}
+    bool read(float& temperature, float& humidity) {
+        uint8_t data[5] = { 0 };
+
+        // 设置为输出并拉低
+        gpiod_line_request_output(line, "dht11", 0);
+        std::this_thread::sleep_for(std::chrono::milliseconds(18));
+
+        // 拉高 40 微秒
+        gpiod_line_set_value(line, 1);
+        std::this_thread::sleep_for(std::chrono::microseconds(40));
+
+        // 切换为输入模式
+        gpiod_line_request_input(line, "dht11");
+
+        // 等待 DHT11 响应
+        auto start = std::chrono::high_resolution_clock::now();
+        while (gpiod_line_get_value(line) == 1) {
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::high_resolution_clock::now() - start).count() > 2) {
+                return false;  // 超时
+            }
+        }
+
+        // 读取 40 位数据
+        for (int i = 0; i < 40; i++) {
+            while (gpiod_line_get_value(line) == 0); // 等待信号开始
+
+            auto t_start = std::chrono::high_resolution_clock::now();
+            while (gpiod_line_get_value(line) == 1); // 计算高电平持续时间
+
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                std::chrono::high_resolution_clock::now() - t_start).count();
+
+            data[i / 8] <<= 1;
+            if (duration > 50) {
+                data[i / 8] |= 1;
+            }
+        }
+
+        // 校验和
+        if (data[4] != ((data[0] + data[1] + data[2] + data[3]) & 0xFF)) {
+            return false;  // 校验失败
+        }
+
+        humidity = data[0] + data[1] * 0.1;
+        temperature = data[2] + data[3] * 0.1;
+        return true;
+    }
+
+private:
+    int pin_number;
+    gpiod_chip* chip;
+    gpiod_line* line;
+};
 
 int main() {
-    std::vector<int> data;
-    if (!readDHT(data)) {
-        std::cerr << "Failed to read data!" << std::endl;
-        return 1;
+    try {
+        DHT11 sensor(DHT11_PIN);
+        float temperature, humidity;
+
+        //  延迟 2 秒，确保 DHT11 初始化完成
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+
+        if (sensor.read(temperature, humidity)) {
+            std::cout << "Temperature: " << temperature << "°C\n";
+            std::cout << "Humidity: " << humidity << "%\n";
+        }
+        else {
+            std::cerr << "Failed to read data from DHT11\n";
+        }
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << "\n";
     }
 
-    // Parse data
-    int humidity = 0, temp = 0, checksum = 0;
-    for (int i = 0; i < 8; i++) {
-        humidity = (humidity << 1) | data[i];
-        temp = (temp << 1) | data[i + 16];
-        checksum = (checksum << 1) | data[i + 32];
-    }
-
-    int sum = (humidity + temp + (data[8] << 8) + (data[24] << 8)) & 0xFF;
-    if (sum != checksum) {
-        std::cerr << "Checksum error!" << std::endl;
-        return 1;
-    }
-
-    std::cout << "Humidity: " << humidity << "%\tTemperature: " << temp << "°C" << std::endl;
     return 0;
 }
