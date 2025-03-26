@@ -31,7 +31,7 @@ public:
     //void stopCamera();
 
 private slots:
-    void captureFrame(); 
+    //void captureFrame();
     void updateFrame();
     void checkSwitchState();
 

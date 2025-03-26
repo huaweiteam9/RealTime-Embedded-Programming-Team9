@@ -17,7 +17,7 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QStackedWidget" name="stackedWidget">
+   <widget class="QStackedWidget" name="StackedWidget">
     <property name="geometry">
      <rect>
       <x>80</x>
@@ -36,7 +36,7 @@
      <widget class="QLabel" name="display">
       <property name="geometry">
        <rect>
-        <x>30</x>
+        <x>40</x>
         <y>20</y>
         <width>271</width>
         <height>211</height>
