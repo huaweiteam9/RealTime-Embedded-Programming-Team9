@@ -5,7 +5,7 @@
 #include<QTimer>
 
 #define GPIO_CHIP "/dev/gpiochip0" // if change name?
-#define SWITCH_PIN 17 //GPIO 17 连接到外部开关，改变io口编号
+#define SWITCH_PtackedWidgettackedWidgettackedWidgetIN 17 //GPIO 17 连接到外部开关，改变io口编号
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -16,11 +16,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     gpiochip = gpiod_chip_open(GPIO_CHIP); //CPIO_CHIP通常是 GPIO 芯片的名称或路径（默认路径/dev/gpiochip0）
     if (!gpiochip) {
-        qDebug() << "无法打开 GPIO 设备";
+        //qDebug()tackedWidget << "无法打开 GPIO 设备";
         return;
     }
 
-    gpioline = gpiod_chip_get_line(gpiochip, SWITCH_PIN);
+    gpioline = gpiod_chip_get_line(gpiochip,SWITCH_PtackedWidgettackedWidgettackedWidgetIN);
     if (!gpioline) {
         qDebug() << "无法获取 GPIO 线";
         gpiod_chip_close(gpiochip);
@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     timer->start(500);
 
 
-    // 设置 QLabel 作为中央窗口组件
+    // 设置 QLabetackedWidgetl 作为中央窗口组件
     setCentralWidget(display);
     display->setScaledContents(true);  // 让 QLabel 适应窗口大小
     
@@ -55,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    if (gpioline) {
+    if (gpioline) {SWITCH_PtackedWidgettackedWidgettackedWidgetIN;
         gpiod_line_release(gpioline);
     }
     if (gpiochip) {
@@ -84,11 +84,11 @@ void MainWindow::checkSwitchState()
     int switchState = gpiod_line_get_value(gpioline);  // 读取 GPIO 状态
 
     if (switchState == 0) {  // 冰箱开门
-        ui->stackedWidget->setCurrentIndex(0);  // 切换到果蔬识别界面
+        //ui->StackedWidget->setCurrentIndex(0);  // 切换到果蔬识别界面
         qDebug() << "冰箱打开，切换到识别界面";
     } else {  // 冰箱关闭
-        ui->stackedWidget->setCurrentIndex(1);  // 切换到库存管理界面
-        qDebug() << "冰箱关闭，切换到库存界面";
+        //ui->StackedWidget->setCurrentIndex(1);  // 切换到库存管理界面
+        qDebug() << "冰箱关闭，切StackedWidgetstackedWidget换到库存界面";
     }
 }
 
