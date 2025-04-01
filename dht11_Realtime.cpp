@@ -82,7 +82,7 @@ private:
 
 int main() {
     int i=0;
-    while( i<15 )
+    while( i<5 )
     {
     try {
         DHT11 sensor(DHT11_PIN);
