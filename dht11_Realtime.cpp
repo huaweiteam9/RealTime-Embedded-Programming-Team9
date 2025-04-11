@@ -5,7 +5,7 @@
 #include <thread>
 
 #define GPIO_CHIP_NAME "/dev/gpiochip0"
-#define DHT11_PIN 4  // GPIO4 (BCM 编号)
+#define DHT11_PIN 4  // GPIO4 (BCM numbering)
 
 class DHT11 {
 public:
@@ -28,32 +28,32 @@ public:
     bool read(float &temperature, float &humidity) {
         uint8_t data[5] = {0};
 
-        // 设置为输出并拉低
+        // set to output mode and pull low 
         gpiod_line_request_output(line, "dht11", 0);
         std::this_thread::sleep_for(std::chrono::milliseconds(18));
 
-        // 拉高 40 微秒
+        // pull high for 40 us
         gpiod_line_set_value(line, 1);
         std::this_thread::sleep_for(std::chrono::microseconds(40));
 
-        // 切换为输入模式
+        // Switch to input mode
         gpiod_line_request_input(line, "dht11");
 
-        // 等待 DHT11 响应
+        // Wait for DHT11 response
         auto start = std::chrono::high_resolution_clock::now();
         while (gpiod_line_get_value(line) == 1) {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(
                     std::chrono::high_resolution_clock::now() - start).count() > 2) {
-                return false;  // 超时
+                return false;  // Timeout
             }
         }
 
-        // 读取 40 位数据
+        // read 40 bits of data
         for (int i = 0; i < 40; i++) {
-            while (gpiod_line_get_value(line) == 0); // 等待信号开始
+            while (gpiod_line_get_value(line) == 0); // wait for signal to go high
 
             auto t_start = std::chrono::high_resolution_clock::now();
-            while (gpiod_line_get_value(line) == 1); // 计算高电平持续时间
+            while (gpiod_line_get_value(line) == 1); // measure high signal duration
 
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(
                 std::chrono::high_resolution_clock::now() - t_start).count();
@@ -64,9 +64,9 @@ public:
             }
         }
 
-        // 校验和
+        // checksum validation
         if (data[4] != ((data[0] + data[1] + data[2] + data[3]) & 0xFF)) {
-            return false;  // 校验失败
+            return false;  // checksum failed
         }
 
         humidity = data[0] + data[1] * 0.1;
@@ -88,7 +88,7 @@ int main() {
         DHT11 sensor(DHT11_PIN);
         float temperature, humidity;
 
-        // 🌟 延迟 2 秒，确保 DHT11 初始化完成
+        // delay two second to ensure DHT11 is initalized
         std::this_thread::sleep_for(std::chrono::seconds(2));
 
         if (sensor.read(temperature, humidity)) {

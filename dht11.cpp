@@ -81,6 +81,9 @@ private:
 };
 
 int main() {
+    int i=0;
+    while( i<15 )
+    {
     try {
         DHT11 sensor(DHT11_PIN);
         float temperature, humidity;
@@ -97,6 +100,7 @@ int main() {
     } catch (const std::exception &e) {
         std::cerr << "Error: " << e.what() << "\n";
     }
-
+    i++;
+}
     return 0;
 }

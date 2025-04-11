@@ -4,6 +4,7 @@
 #include <atomic>
 #include <unistd.h>
 #include <gpiod.h>
+#include <mutex>
 #include <opencv2/dnn.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
@@ -15,8 +16,32 @@ using namespace dnn;
 #define CHIP_NAME "gpiochip0"
 #define LINE_NUM 17  // BCM GPIO 17
 
-atomic<bool> camera_on(false);  // 共享变量，用于控制摄像头线程
+atomic<bool> camera_on(false);
+mutex detection_mutex;
+vector<Rect> latest_boxes;
+vector<int> latest_classIds;
+bool detection_available = false;
 
+vector<string> classNames = {
+    "apple", "cabbage", "carrot", "grape", "lemon",
+    "mango", "napa cabbage", "peach", "pepper", "potato", "radish"
+};
+
+// callbackFunction when camera turn off, output detect results 
+void handleDetections(const vector<Rect>& boxes, const vector<int>& ids) {
+    cout << "\n[Callback] Detection results before camera closed:\n";
+    for (size_t i = 0; i < boxes.size(); ++i) {
+        cout << "- Object: ";
+        if (ids[i] >= 0 && ids[i] < classNames.size())
+            cout << classNames[ids[i]];
+        else
+            cout << "ID:" << ids[i];
+        cout << " at (" << boxes[i].x << "," << boxes[i].y << "," 
+             << boxes[i].width << "x" << boxes[i].height << ")" << endl;
+    }
+}
+
+// GPIO monitor threat（with callback active）
 void gpio_monitor_thread() {
     gpiod_chip *chip = gpiod_chip_open_by_name(CHIP_NAME);
     if (!chip) {
@@ -38,26 +63,36 @@ void gpio_monitor_thread() {
     }
 
     cout << "Monitoring GPIO17... (press Ctrl+C to exit)" << endl;
+    int prev_value = gpiod_line_get_value(line);
+
     while (true) {
         int value = gpiod_line_get_value(line);
-        cout << gpiod_line_get_value(line) << endl;
-        camera_on = (value == 1);  // 低电平表示按下（开）
-        usleep(200000);  // 200 ms
+        camera_on = (value == 1);  // high value = open
+
+        if (prev_value == 1 && value == 0) {
+            // callback when status from 1 to 0
+            lock_guard<mutex> lock(detection_mutex);
+            if (detection_available) {
+                handleDetections(latest_boxes, latest_classIds);
+                detection_available = false;
+            } else {
+                cout << "[Callback] No detection results available.\n";
+            }
+        }
+
+        prev_value = value;
+        usleep(200000);  // 200ms
     }
 
     gpiod_line_release(line);
     gpiod_chip_close(chip);
 }
 
+// camera and yolo thread
 void camera_yolo_thread() {
     string modelPath = "best.onnx";
     int inputWidth = 640, inputHeight = 640;
     float confThreshold = 0.7f, nmsThreshold = 0.45f;
-
-    vector<string> classNames = {
-        "apple", "cabbage", "carrot", "grape", "lemon",
-        "mango", "napa cabbage", "peach", "pepper", "potato", "radish"
-    };
 
     Net net = readNetFromONNX(modelPath);
     if (net.empty()) {
@@ -66,29 +101,38 @@ void camera_yolo_thread() {
     }
     cout << "Model loaded: " << modelPath << endl;
 
-        VideoCapture cap("libcamerasrc ! video/x-raw,format=RGB ! videoconvert ! appsink", CAP_GSTREAMER);
+    namedWindow("YOLO Detection", WINDOW_NORMAL);
 
-        namedWindow("YOLO Detection", WINDOW_NORMAL);
-        // int wid_name = 0;
-        
+    VideoCapture cap;
+    bool cameraOpened = false;
+
     while (true) {
-        if (!camera_on) {
-            usleep(1000);  // 等待开启
-            
-            //cap.release();
+        if (camera_on && !cameraOpened) {
+            cap.open("libcamerasrc ! video/x-raw,format=RGB ! videoconvert ! appsink", CAP_GSTREAMER);
+            if (!cap.isOpened()) {
+                cerr << "Unable to open camera." << endl;
+                continue;
+            }
+            cap.set(CAP_PROP_FRAME_WIDTH, 1280);
+            cap.set(CAP_PROP_FRAME_HEIGHT, 960);
+            cameraOpened = true;
+            cout << "Camera started." << endl;
+        }
+
+        if (!camera_on && cameraOpened) {
+            cap.release();
             destroyAllWindows();
+            cameraOpened = false;
+            cout << "Camera stopped." << endl;
+            usleep(200000);
             continue;
         }
-        
 
-        if (!cap.isOpened()) {
-            cerr << "Unable to open camera." << endl;
-            return;
+        if (!cameraOpened) {
+            usleep(200000);
+            continue;
         }
-        // wid_name++;
-        // VideoCapture cap("libcamerasrc ! video/x-raw,format=RGB ! videoconvert ! appsink", CAP_GSTREAMER);
-        cap.set(CAP_PROP_FRAME_WIDTH, 640);
-        cap.set(CAP_PROP_FRAME_HEIGHT, 640);
+
         Mat frame;
         cap >> frame;
         if (frame.empty()) continue;
@@ -137,6 +181,19 @@ void camera_yolo_thread() {
 
         vector<int> indices;
         NMSBoxes(boxes, confidences, confThreshold, nmsThreshold, indices);
+
+        // render box + save detection result
+        {
+            lock_guard<mutex> lock(detection_mutex);
+            latest_boxes.clear();
+            latest_classIds.clear();
+            for (int idx : indices) {
+                latest_boxes.push_back(boxes[idx]);
+                latest_classIds.push_back(classIds[idx]);
+            }
+            detection_available = !latest_boxes.empty();
+        }
+
         for (int idx : indices) {
             Rect box = boxes[idx];
             rectangle(frame, box, Scalar(0, 255, 0), 2);
@@ -154,13 +211,14 @@ void camera_yolo_thread() {
         if (c == 'q' || c == 27) break;
     }
 
-    cap.release();
+    if (cap.isOpened()) cap.release();
     destroyAllWindows();
 }
 
+// MainFunction
 int main() {
-    thread gpioThread(gpio_monitor_thread);
-    thread yoloThread(camera_yolo_thread);
+    thread gpioThread(gpio_monitor_thread); // GPIO monitor thread
+    thread yoloThread(camera_yolo_thread); // camera and YOLO detection thread
 
     gpioThread.join();
     yoloThread.join();

@@ -48,8 +48,8 @@ int main()
     }
 
     // 设置摄像头分辨率（可根据需要设置）
-    cap.set(CAP_PROP_FRAME_WIDTH, 1280);
-    cap.set(CAP_PROP_FRAME_HEIGHT, 720);
+    cap.set(CAP_PROP_FRAME_WIDTH, 640);
+    cap.set(CAP_PROP_FRAME_HEIGHT, 480);
 
     // 创建窗口
     const string windowName = "实时检测";

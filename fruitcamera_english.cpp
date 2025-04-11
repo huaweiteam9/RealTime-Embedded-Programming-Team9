@@ -41,7 +41,7 @@ int main()
     cout << "Successfully loaded model: " << modelPath << endl;
 
     // --------------------- Open Camera ---------------------
-    VideoCapture cap(cameraID);
+    VideoCapture cap("libcamerasrc ! video/x-raw,format=RGB ! videoconvert ! appsink", CAP_GSTREAMER);
     if (!cap.isOpened()) {
         cerr << "Unable to open camera, please check the camera ID or connection." << endl;
         return -1;
@@ -49,7 +49,7 @@ int main()
 
     // Set camera resolution (adjust as needed)
     cap.set(CAP_PROP_FRAME_WIDTH, 640);
-    cap.set(CAP_PROP_FRAME_HEIGHT, 480);
+    cap.set(CAP_PROP_FRAME_HEIGHT, 640);
 
     // Create window
     const string windowName = "Real-time Detection";
