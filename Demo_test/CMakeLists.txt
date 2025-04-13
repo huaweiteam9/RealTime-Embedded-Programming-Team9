@@ -47,6 +47,7 @@ add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 # - GPIOD：支持 GPIO 操作
 # - pthread：标准线程库（在 Linux 下需要链接）
 target_link_libraries(${PROJECT_NAME}
+    dht11_Realtime gpiod
     ${OpenCV_LIBS}
     Qt5::Widgets
     ${GPIOD_LIBRARIES}

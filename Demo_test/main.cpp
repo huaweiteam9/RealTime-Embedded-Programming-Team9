@@ -8,8 +8,8 @@
 #include <opencv2/dnn.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
-
-
+#include "fruitcamera_english.h"
+#include "secondpage.h"
 
 
 
@@ -22,6 +22,8 @@ int main() {
     dht_thread.join();
     gpio.join();
     yoloThread.join();
+
+
 
 
     return 0;
