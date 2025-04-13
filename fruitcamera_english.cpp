@@ -1,103 +1,239 @@
+#include <iostream>
+#include <string>
+#include <thread>
+#include <atomic>
+#include <mutex>
+#include <unistd.h>
+#include <gpiod.h>
 #include <opencv2/dnn.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
-#include <iostream>
-#include <vector>
-#include <string>
 
 using namespace std;
 using namespace cv;
 using namespace dnn;
 
-int main()
-{
-    // --------------------- Parameter Settings ---------------------
-    // Model file path (modify according to your situation)
-    string modelPath = "best.onnx";  // Exported YOLOv5s ONNX model
-    // Camera ID, default is 0
-    int cameraID = 0;
+#define GPIO_CHIP_NAME "/dev/gpiochip0"
+#define CHIP_NAME "gpiochip0"
+#define LINE_NUM 17
+#define DHT11_PIN 4  // GPIO4 (BCM numbering)
 
-    // Network input size (YOLOv5s default input is 640¡Á640)
-    int inputWidth = 640;
-    int inputHeight = 640;
+atomic<bool> camera_on(false);
+atomic<bool> shutdown_requested(false);
+mutex frame_mutex;
+Mat latest_frame;
+atomic<bool> frame_available(false);
 
-    // Confidence threshold and non-maximum suppression (NMS) threshold
-    float confThreshold = 0.7f;
-    float nmsThreshold = 0.45f;
+mutex detection_mutex;
+vector<Rect> latest_boxes;
+vector<int> latest_classIds;
+bool detection_available = false;
 
-    // List of class names (corresponding to the 11 classes in the candidate boxes scores)
-    vector<string> classNames = {
-        "apple", "cabbage", "carrot", "grape", "lemon",
-        "mango", "napa cabbage", "peach", "pepper", "potato",
-        "radish"
-    };
+vector<string> classNames = {
+    "apple", "cabbage", "carrot", "grape", "lemon",
+    "mango", "napa cabbage", "peach", "pepper", "potato", "radish"
+};
 
-    // --------------------- Load Model ---------------------
-    Net net = readNetFromONNX(modelPath);
-    if (net.empty()) {
-        cerr << "Failed to load model, please check the path: " << modelPath << endl;
-        return -1;
+// callbackFunction when camera turn off, output detect results 
+void handleDetections(const vector<Rect>& boxes, const vector<int>& ids) {
+    cout << "\n[Callback] Detection results before camera closed:\n";
+    for (size_t i = 0; i < boxes.size(); ++i) {
+        cout << "- Object: ";
+        if (ids[i] >= 0 && ids[i] < classNames.size())
+            cout << classNames[ids[i]];
+        else
+            cout << "ID:" << ids[i];
+        cout << " at (" << boxes[i].x << "," << boxes[i].y << "," 
+             << boxes[i].width << "x" << boxes[i].height << ")" << endl;
     }
-    cout << "Successfully loaded model: " << modelPath << endl;
+}
 
-    // --------------------- Open Camera ---------------------
-    VideoCapture cap("libcamerasrc ! video/x-raw,format=RGB ! videoconvert ! appsink", CAP_GSTREAMER);
-    if (!cap.isOpened()) {
-        cerr << "Unable to open camera, please check the camera ID or connection." << endl;
-        return -1;
+// GPIO monitor threat(with callback active)
+void gpio_monitor_thread() {
+    gpiod_chip *chip = gpiod_chip_open_by_name(CHIP_NAME);
+    if (!chip) {
+        cerr << "cannot open GPIO: " << CHIP_NAME << endl;
+        return;
     }
 
-    // Set camera resolution (adjust as needed)
-    cap.set(CAP_PROP_FRAME_WIDTH, 640);
-    cap.set(CAP_PROP_FRAME_HEIGHT, 640);
+    gpiod_line *line = gpiod_chip_get_line(chip, LINE_NUM);
+    if (!line) {
+        cerr << "cannot obtain GPIO id: " << LINE_NUM << endl;
+        gpiod_chip_close(chip);
+        return;
+    }
 
-    // Create window
-    const string windowName = "Real-time Detection";
-    namedWindow(windowName, WINDOW_NORMAL);
+    if (gpiod_line_request_input_flags(line, "switch_monitor", GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP) < 0) {
+        cerr << "GPIO input_mode failed" << endl;
+        gpiod_chip_close(chip);
+        return;
+    }
 
-    // --------------------- Real-time Detection Loop ---------------------
-    Mat frame;
+    cout << "Monitoring GPIO17... (press Ctrl+C to exit)" << endl;
+    int prev_value = gpiod_line_get_value(line);
+
     while (true) {
-        // Read the current frame
-        cap >> frame;
-        if (frame.empty()) {
-            cerr << "Empty frame, ending detection." << endl;
-            break;
+        int value = gpiod_line_get_value(line);
+        camera_on = (value == 1);  // high value = open
+
+        if (prev_value == 1 && value == 0) {
+            // callback when status from 1 to 0
+            lock_guard<mutex> lock(detection_mutex);
+            if (detection_available) {
+                handleDetections(latest_boxes, latest_classIds);
+                detection_available = false;
+            } else {
+                cout << "[Callback] No detection results available.\n";
+            }
         }
 
-        // Clone the original frame for drawing (if you want to preserve the original frame)
-        Mat outputFrame = frame.clone();
+        prev_value = value;
+        usleep(200000);  // 200ms
+    }
 
-        // --------------------- Image Preprocessing ---------------------
+    gpiod_line_release(line);
+    gpiod_chip_close(chip);
+}
+
+class DHT11 {
+public:
+    DHT11(int pin) : pin_number(pin) {
+        chip = gpiod_chip_open(GPIO_CHIP_NAME);
+        if (!chip) {
+            throw std::runtime_error("Failed to open GPIO chip");
+        }
+
+        line = gpiod_chip_get_line(chip, pin);
+        if (!line) {
+            throw std::runtime_error("Failed to get GPIO line");
+        }
+    }
+
+    ~DHT11() {
+        if (chip) gpiod_chip_close(chip);
+    }
+
+    bool read(float &temperature, float &humidity) {
+        uint8_t data[5] = {0};
+
+        // set to output mode and pull low 
+        gpiod_line_request_output(line, "dht11", 0);
+        std::this_thread::sleep_for(std::chrono::milliseconds(18));
+
+        // pull high for 40 us
+        gpiod_line_set_value(line, 1);
+        std::this_thread::sleep_for(std::chrono::microseconds(40));
+
+        // Switch to input mode
+        gpiod_line_request_input(line, "dht11");
+
+        // Wait for DHT11 response
+        auto start = std::chrono::high_resolution_clock::now();
+        while (gpiod_line_get_value(line) == 1) {
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::high_resolution_clock::now() - start).count() > 2) {
+                return false;  // Timeout
+            }
+        }
+
+        // read 40 bits of data
+        for (int i = 0; i < 40; i++) {
+            while (gpiod_line_get_value(line) == 0); // wait for signal to go high
+
+            auto t_start = std::chrono::high_resolution_clock::now();
+            while (gpiod_line_get_value(line) == 1); // measure high signal duration
+
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                std::chrono::high_resolution_clock::now() - t_start).count();
+
+            data[i / 8] <<= 1;
+            if (duration > 50) {
+                data[i / 8] |= 1;
+            }
+        }
+
+        // checksum validation
+        if (data[4] != ((data[0] + data[1] + data[2] + data[3]) & 0xFF)) {
+            return false;  // checksum failed
+        }
+
+        humidity = data[0] + data[1] * 0.1;
+        temperature = data[2] + data[3] * 0.1;
+        return true;
+    }
+
+private:
+    int pin_number;
+    gpiod_chip *chip;
+    gpiod_line *line;
+};
+
+void camera_yolo_thread() {
+    string modelPath = "best.onnx";
+    int inputWidth = 640, inputHeight = 640;
+    float confThreshold = 0.7f, nmsThreshold = 0.45f;
+
+    Net net = readNetFromONNX(modelPath);
+    if (net.empty()) {
+        cerr << "Failed to load model: " << modelPath << endl;
+        return;
+    }
+    cout << "Model loaded: " << modelPath << endl;
+
+    namedWindow("YOLO Detection", WINDOW_NORMAL);
+
+    VideoCapture cap;
+    bool cameraOpened = false;
+
+    while (true) {
+        if (camera_on && !cameraOpened) {
+            cap.open("libcamerasrc ! video/x-raw,format=RGB ! videoconvert ! appsink", CAP_GSTREAMER);
+            if (!cap.isOpened()) {
+                cerr << "Unable to open camera." << endl;
+                continue;
+            }
+            //cap.set(CAP_PROP_FRAME_WIDTH, 1280);
+            //cap.set(CAP_PROP_FRAME_HEIGHT, 960);
+            cameraOpened = true;
+            cout << "Camera started." << endl;
+        }
+
+        if (!camera_on && cameraOpened) {
+            cap.release();
+            destroyAllWindows();
+            cameraOpened = false;
+            cout << "Camera stopped." << endl;
+            usleep(200000);
+            continue;
+        }
+
+        if (!cameraOpened) {
+            usleep(200000);
+            continue;
+        }
+
+        Mat frame;
+        cap >> frame;
+        if (frame.empty()) continue;
+
         Mat blob;
-        // Resize the frame to 640x640, normalize to [0,1], and convert BGR to RGB
         blobFromImage(frame, blob, 1.0 / 255.0, Size(inputWidth, inputHeight), Scalar(), true, false);
         net.setInput(blob);
 
-        // --------------------- Forward Inference ---------------------
         vector<Mat> outs;
         net.forward(outs, net.getUnconnectedOutLayersNames());
 
-        // Assume that the model output is a 3D tensor with shape [1, 25200, 16]
-        if (outs.empty()) {
-            cerr << "No output result!" << endl;
-            continue;
-        }
         Mat outBlob = outs[0];
-        if (outBlob.dims != 3) {
-            cerr << "Output tensor dimension error, expected 3 dims but got " << outBlob.dims << " dims" << endl;
-            continue;
-        }
-        int numPredictions = outBlob.size[1];  // For example, 25200
-        int numAttrs = outBlob.size[2];        // For example, 16
+        if (outBlob.dims != 3) continue;
 
-        // Reshape the output into a 2D matrix where each row represents a candidate box
+        int numPredictions = outBlob.size[1];
+        int numAttrs = outBlob.size[2];
         Mat detectionMat(numPredictions, numAttrs, CV_32F, outBlob.ptr<float>());
 
-        // --------------------- Parse Detection Results ---------------------
         vector<Rect> boxes;
         vector<float> confidences;
         vector<int> classIds;
+
         for (int i = 0; i < detectionMat.rows; i++) {
             float cx = detectionMat.at<float>(i, 0);
             float cy = detectionMat.at<float>(i, 1);
@@ -105,7 +241,6 @@ int main()
             float h = detectionMat.at<float>(i, 3);
             float objectness = detectionMat.at<float>(i, 4);
 
-            // Extract class scores (assume class scores are at indices 5 to 15, total 11 classes)
             Mat scores = detectionMat.row(i).colRange(5, detectionMat.cols);
             Point classIdPoint;
             double maxClassScore;
@@ -113,7 +248,6 @@ int main()
             float confidence = objectness * static_cast<float>(maxClassScore);
 
             if (confidence > confThreshold) {
-                // Map the center coordinates and size from the 640x640 scale to the original image size
                 int left = int((cx - w / 2) * float(frame.cols) / inputWidth);
                 int top = int((cy - h / 2) * float(frame.rows) / inputHeight);
                 int right = int((cx + w / 2) * float(frame.cols) / inputWidth);
@@ -124,33 +258,72 @@ int main()
             }
         }
 
-        // --------------------- Non-maximum Suppression (NMS) ---------------------
         vector<int> indices;
         NMSBoxes(boxes, confidences, confThreshold, nmsThreshold, indices);
 
-        // --------------------- Draw Detection Boxes and Labels ---------------------
+        // render box + save detection result
+        {
+            lock_guard<mutex> lock(detection_mutex);
+            latest_boxes.clear();
+            latest_classIds.clear();
+            for (int idx : indices) {
+                latest_boxes.push_back(boxes[idx]);
+                latest_classIds.push_back(classIds[idx]);
+            }
+            detection_available = !latest_boxes.empty();
+        }
+
         for (int idx : indices) {
             Rect box = boxes[idx];
-            rectangle(outputFrame, box, Scalar(0, 255, 0), 2);
+            rectangle(frame, box, Scalar(0, 255, 0), 2);
             string label;
             int clsId = classIds[idx];
             if (clsId >= 0 && clsId < classNames.size())
                 label = format("%s %.2f", classNames[clsId].c_str(), confidences[idx]);
             else
                 label = format("ID:%d %.2f", clsId, confidences[idx]);
-            putText(outputFrame, label, box.tl(), FONT_HERSHEY_SIMPLEX, 0.6, Scalar(0, 0, 255), 2);
+            putText(frame, label, box.tl(), FONT_HERSHEY_SIMPLEX, 0.6, Scalar(0, 0, 255), 2);
         }
 
-        // --------------------- Display Results ---------------------
-        imshow(windowName, outputFrame);
-
-        // Press 'q' or ESC to exit real-time detection
+        imshow("YOLO Detection", frame);
         char c = (char)waitKey(1);
-        if (c == 'q' || c == 27)
-            break;
+        if (c == 'q' || c == 27) break;
     }
 
-    cap.release();
+    if (cap.isOpened()) cap.release();
     destroyAllWindows();
+}
+
+void dht11_thread() {
+    for (int i = 0; i < 5; ++i) {
+        try {
+            DHT11 sensor(DHT11_PIN);
+            float temperature, humidity;
+
+            std::this_thread::sleep_for(std::chrono::seconds(2));  // Ensure DHT11 is ready
+
+            if (sensor.read(temperature, humidity)) {
+                std::cout << "[DHT11] Temperature: " << temperature << "°C\n";
+                std::cout << "[DHT11] Humidity: " << humidity << "%\n";
+            } else {
+                std::cerr << "[DHT11] Failed to read data from sensor\n";
+            }
+        } catch (const std::exception &e) {
+            std::cerr << "[DHT11] Error: " << e.what() << "\n";
+        }
+    }
+}
+
+int main() {
+    std::thread dht_thread(dht11_thread);
+
+    std::thread gpio(gpio_monitor_thread);
+    std::thread yoloThread(camera_yolo_thread); // camera and YOLO detection thread
+
+    dht_thread.join();
+    gpio.join();
+    yoloThread.join();
+
+
     return 0;
 }
