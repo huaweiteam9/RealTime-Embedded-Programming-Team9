@@ -295,7 +295,7 @@ void camera_yolo_thread() {
 }
 
 void dht11_thread() {
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 1; i > 0; ++i) {
         try {
             DHT11 sensor(DHT11_PIN);
             float temperature, humidity;
