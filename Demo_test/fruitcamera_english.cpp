@@ -50,14 +50,13 @@ void handleDetections(const vector<Rect>& boxes, const vector<int>& ids) {
             cout << classNames[ids[i]];
         else
             cout << "ID:" << ids[i];
-        cout << " at (" << boxes[i].x << "," << boxes[i].y << "," 
-             << boxes[i].width << "x" << boxes[i].height << ")" << endl;
+        cout << " at (" << boxes[i].x << "," << boxes[i].y << ","
+            << boxes[i].width << "x" << boxes[i].height << ")" << endl;
         // 使用 queued connection 确保在主线程调用 SecondPage 的显示方法
         if (g_secondPage) {
             QMetaObject::invokeMethod(g_secondPage, "showPage", Qt::QueuedConnection);
-
+        }
     }
-
 }
 
 // GPIO monitor threat(with callback active)
