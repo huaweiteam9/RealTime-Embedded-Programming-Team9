@@ -10,10 +10,17 @@
 #include <opencv2/highgui.hpp>
 #include "fruitcamera_english.h"
 #include "secondpage.h"
+#include <QApplication>
 
 
-
-int main() {
+int main(int argc, char *argv[]) {
+    
+    
+    //QApplication a(argc, argv);
+    //SecondPage w;
+    //w.show();
+    
+    
     std::thread dht_thread(dht11_thread);
 
     std::thread gpio(gpio_monitor_thread);
@@ -23,8 +30,6 @@ int main() {
     gpio.join();
     yoloThread.join();
 
-
-
-
+    //return a.exec();
     return 0;
 }
