@@ -8,6 +8,7 @@
 #include <opencv2/dnn.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
+#include <QMetaObject>
 #include "fruitcamera_english.h"
 #include "secondpage.h"
 
@@ -15,6 +16,9 @@
 using namespace std;
 using namespace cv;
 using namespace dnn;
+
+// 声明外部全局 SecondPage 指针（在 main.cpp 中定义）
+extern SecondPage* g_secondPage;
 
 #define GPIO_CHIP_NAME "/dev/gpiochip0"
 #define CHIP_NAME "gpiochip0"
@@ -48,6 +52,10 @@ void handleDetections(const vector<Rect>& boxes, const vector<int>& ids) {
             cout << "ID:" << ids[i];
         cout << " at (" << boxes[i].x << "," << boxes[i].y << "," 
              << boxes[i].width << "x" << boxes[i].height << ")" << endl;
+        // 使用 queued connection 确保在主线程调用 SecondPage 的显示方法
+        if (g_secondPage) {
+            QMetaObject::invokeMethod(g_secondPage, "showPage", Qt::QueuedConnection);
+
     }
 
 }
