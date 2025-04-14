@@ -230,27 +230,7 @@ void MainWindow::updateSecondPageTable()
     }
 
 
-    // 清空原有表格数据
-    //secondPage->clearTable();
-    // 遍历检测数据，将类别和数量填入表格
-    //qDebug() << "Updating second page table...";
-   // QMapIterator<QString, int> it(m_latestDetectionResults);
-
-
-   // while (it.hasNext()) {
-    //    it.next();
-
-        // 获取当前系统时间作为放入时间
-    //    QDateTime putTime = QDateTime::currentDateTime();
-        // 计算过期时间，设为放入时间的一天后
-    //    QDateTime expiryTime = putTime.addDays(1);
-
-        // 格式化时间字符串，你可以根据实际需求调整时间格式
-    //    QString putTimeStr = putTime.toString("yyyy-MM-dd HH:mm:ss");
-    //    QString expiryTimeStr = expiryTime.toString("yyyy-MM-dd HH:mm:ss");
-
-    //    secondPage->addRow(it.key(), QString::number(it.value()), putTimeStr, expiryTimeStr);
-   // }
+   
 }
 
 // 根据冰箱开关状态切换界面：冰箱门打开显示检测页面；关闭时显示第二页面
