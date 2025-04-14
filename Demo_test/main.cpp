@@ -23,17 +23,7 @@ int main(int argc, char *argv[]) {
     
     QApplication a(argc, argv);
     SecondPage w;
-    w.hide();
-    
-    
-    std::thread dht_thread(dht11_thread);
-
-    std::thread gpio(gpio_monitor_thread);
-    std::thread yoloThread(camera_yolo_thread); // camera and YOLO detection thread
-
-    dht_thread.join();
-    gpio.join();
-    yoloThread.join();
+    w.show();
 
     return a.exec();
     //return 0;

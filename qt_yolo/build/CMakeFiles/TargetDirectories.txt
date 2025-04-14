@@ -1,5 +1,4 @@
-/Users/lonale/Desktop/qt_yolo/build/CMakeFiles/qt_yolo.dir
-/Users/lonale/Desktop/qt_yolo/build/CMakeFiles/edit_cache.dir
-/Users/lonale/Desktop/qt_yolo/build/CMakeFiles/rebuild_cache.dir
-/Users/lonale/Desktop/qt_yolo/build/CMakeFiles/qt_yolo_autogen_timestamp_deps.dir
-/Users/lonale/Desktop/qt_yolo/build/CMakeFiles/qt_yolo_autogen.dir
+/home/admin/RealTime-Embedded-Programming-Team9/qt_yolo/build/CMakeFiles/qt_yolo.dir
+/home/admin/RealTime-Embedded-Programming-Team9/qt_yolo/build/CMakeFiles/edit_cache.dir
+/home/admin/RealTime-Embedded-Programming-Team9/qt_yolo/build/CMakeFiles/rebuild_cache.dir
+/home/admin/RealTime-Embedded-Programming-Team9/qt_yolo/build/CMakeFiles/qt_yolo_autogen.dir

@@ -20,7 +20,7 @@ FruitVegDetect::FruitVegDetect(const std::string &modelPath, int cameraID,
                   "radish" };
 
     // 打开摄像头（这里使用 cameraID，一般默认为 0）
-    cap.open(cameraID);
+    cap.open("libcamerasrc ! video/x-raw,format=RGB ! videoconvert ! appsink", CAP_GSTREAMER);
     if (!cap.isOpened()) {
         std::cerr << "Unable to open camera with ID: " << cameraID << std::endl;
     }

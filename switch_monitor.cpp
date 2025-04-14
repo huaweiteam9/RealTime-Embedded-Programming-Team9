@@ -2,9 +2,9 @@
 #include <string>
 #include <thread>
 #include <atomic>
+#include <mutex>
 #include <unistd.h>
 #include <gpiod.h>
-#include <mutex>
 #include <opencv2/dnn.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
@@ -13,10 +13,17 @@ using namespace std;
 using namespace cv;
 using namespace dnn;
 
+#define GPIO_CHIP_NAME "/dev/gpiochip0"
 #define CHIP_NAME "gpiochip0"
-#define LINE_NUM 17  // BCM GPIO 17
+#define LINE_NUM 17
+#define DHT11_PIN 4  // GPIO4 (BCM numbering)
 
 atomic<bool> camera_on(false);
+atomic<bool> shutdown_requested(false);
+mutex frame_mutex;
+Mat latest_frame;
+atomic<bool> frame_available(false);
+
 mutex detection_mutex;
 vector<Rect> latest_boxes;
 vector<int> latest_classIds;
@@ -41,7 +48,7 @@ void handleDetections(const vector<Rect>& boxes, const vector<int>& ids) {
     }
 }
 
-// GPIO monitor threat（with callback active）
+// GPIO monitor threat(with callback active)
 void gpio_monitor_thread() {
     gpiod_chip *chip = gpiod_chip_open_by_name(CHIP_NAME);
     if (!chip) {
@@ -88,7 +95,79 @@ void gpio_monitor_thread() {
     gpiod_chip_close(chip);
 }
 
-// camera and yolo thread
+class DHT11 {
+public:
+    DHT11(int pin) : pin_number(pin) {
+        chip = gpiod_chip_open(GPIO_CHIP_NAME);
+        if (!chip) {
+            throw std::runtime_error("Failed to open GPIO chip");
+        }
+
+        line = gpiod_chip_get_line(chip, pin);
+        if (!line) {
+            throw std::runtime_error("Failed to get GPIO line");
+        }
+    }
+
+    ~DHT11() {
+        if (chip) gpiod_chip_close(chip);
+    }
+
+    bool read(float &temperature, float &humidity) {
+        uint8_t data[5] = {0};
+
+        // set to output mode and pull low 
+        gpiod_line_request_output(line, "dht11", 0);
+        std::this_thread::sleep_for(std::chrono::milliseconds(18));
+
+        // pull high for 40 us
+        gpiod_line_set_value(line, 1);
+        std::this_thread::sleep_for(std::chrono::microseconds(40));
+
+        // Switch to input mode
+        gpiod_line_request_input(line, "dht11");
+
+        // Wait for DHT11 response
+        auto start = std::chrono::high_resolution_clock::now();
+        while (gpiod_line_get_value(line) == 1) {
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::high_resolution_clock::now() - start).count() > 2) {
+                return false;  // Timeout
+            }
+        }
+
+        // read 40 bits of data
+        for (int i = 0; i < 40; i++) {
+            while (gpiod_line_get_value(line) == 0); // wait for signal to go high
+
+            auto t_start = std::chrono::high_resolution_clock::now();
+            while (gpiod_line_get_value(line) == 1); // measure high signal duration
+
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                std::chrono::high_resolution_clock::now() - t_start).count();
+
+            data[i / 8] <<= 1;
+            if (duration > 50) {
+                data[i / 8] |= 1;
+            }
+        }
+
+        // checksum validation
+        if (data[4] != ((data[0] + data[1] + data[2] + data[3]) & 0xFF)) {
+            return false;  // checksum failed
+        }
+
+        humidity = data[0] + data[1] * 0.1;
+        temperature = data[2] + data[3] * 0.1;
+        return true;
+    }
+
+private:
+    int pin_number;
+    gpiod_chip *chip;
+    gpiod_line *line;
+};
+
 void camera_yolo_thread() {
     string modelPath = "best.onnx";
     int inputWidth = 640, inputHeight = 640;
@@ -113,8 +192,8 @@ void camera_yolo_thread() {
                 cerr << "Unable to open camera." << endl;
                 continue;
             }
-            cap.set(CAP_PROP_FRAME_WIDTH, 1280);
-            cap.set(CAP_PROP_FRAME_HEIGHT, 960);
+            //cap.set(CAP_PROP_FRAME_WIDTH, 1280);
+            //cap.set(CAP_PROP_FRAME_HEIGHT, 960);
             cameraOpened = true;
             cout << "Camera started." << endl;
         }
@@ -215,13 +294,36 @@ void camera_yolo_thread() {
     destroyAllWindows();
 }
 
-// MainFunction
-int main() {
-    thread gpioThread(gpio_monitor_thread); // GPIO monitor thread
-    thread yoloThread(camera_yolo_thread); // camera and YOLO detection thread
+void dht11_thread() {
+    for (int i = 1; i > 0; ++i) {
+        try {
+            DHT11 sensor(DHT11_PIN);
+            float temperature, humidity;
 
-    gpioThread.join();
+            std::this_thread::sleep_for(std::chrono::seconds(2));  // Ensure DHT11 is ready
+
+            if (sensor.read(temperature, humidity)) {
+                std::cout << "[DHT11] Temperature: " << temperature << "°C\n";
+                std::cout << "[DHT11] Humidity: " << humidity << "%\n";
+            } else {
+                std::cerr << "[DHT11] Failed to read data from sensor\n";
+            }
+        } catch (const std::exception &e) {
+            std::cerr << "[DHT11] Error: " << e.what() << "\n";
+        }
+    }
+}
+
+int main() {
+    std::thread dht_thread(dht11_thread);
+
+    std::thread gpio(gpio_monitor_thread);
+    std::thread yoloThread(camera_yolo_thread); // camera and YOLO detection thread
+
+    dht_thread.join();
+    gpio.join();
     yoloThread.join();
+
 
     return 0;
 }

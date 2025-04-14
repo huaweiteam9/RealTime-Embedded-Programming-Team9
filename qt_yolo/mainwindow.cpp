@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     // 创建 FruitVegDetect 对象，假设模型文件 best.onnx 与可执行文件在同一目录下
     //detector = new FruitVegDetect("D:/qtpro/test5/test5/best.onnx", 0, 640, 640, 0.7f, 0.45f);
-    detector = new FruitVegDetect("./best.onnx", 0, 640, 640, 0.7f, 0.45f);
+    detector = new FruitVegDetect("../best.onnx", 0, 640, 640, 0.7f, 0.45f);
 
     // 设置界面布局，将 imageLabel 填入主窗口
     QWidget *centralWidget = new QWidget(this);

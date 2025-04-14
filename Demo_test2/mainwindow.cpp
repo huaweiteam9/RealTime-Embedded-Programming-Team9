@@ -1,4 +1,7 @@
 #include "mainwindow.h"
+#include "SensorWorker.h"
+#include <QLabel>
+#include <QThread>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QDebug>
@@ -16,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     // 勾选表示冰箱门打开（显示检测页面），未勾选表示冰箱门关闭（显示第二界面）
     fridgeSwitch = new QCheckBox("Refrigerator Open", this);
     fridgeSwitch->setChecked(true);
+    fridgeSwitch->hide();
 
     // --- 创建堆叠窗口 (QStackedWidget) ---
     stackedWidget = new QStackedWidget(this);
@@ -40,11 +44,21 @@ MainWindow::MainWindow(QWidget *parent)
     stackedWidget->addWidget(secondPage);
     stackedWidget->setCurrentIndex(fridgeSwitch->isChecked() ? 0 : 1);
 
+
+     //  新增：创建温湿度显示的 QLabel ---
+     sensorLabel = new QLabel("", this);
+     sensorLabel->setAlignment(Qt::AlignCenter);
+     // 可设置一个合适的字体或者大小
+     sensorLabel->setStyleSheet("font-size:16px; color:blue;");
+
+   
+
     // --- 创建主布局 ---
     QWidget *centralWidget = new QWidget(this);
     QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
     mainLayout->setMargin(0);    // 无边距
     mainLayout->setSpacing(0);   // 无间距
+    mainLayout->addWidget(sensorLabel);  
     mainLayout->addWidget(fridgeSwitch);
     mainLayout->addWidget(stackedWidget);
     centralWidget->setLayout(mainLayout);
@@ -56,7 +70,7 @@ MainWindow::MainWindow(QWidget *parent)
     // --- 设置检测线程，用于捕获摄像头并进行果蔬检测 ---
     workerThread = new QThread(this);
     // 请确保这里传入的路径为你实际的模型文件路径
-    worker = new DetectionWorker("D:/qtpro/test8/test8/best.onnx", 0, 640, 640, 0.7f, 0.45f);
+    worker = new DetectionWorker("best.onnx", 0, 640, 640, 0.7f, 0.45f);
     worker->moveToThread(workerThread);
     connect(workerThread, &QThread::started, worker, &DetectionWorker::process);
     // 每当检测线程有新帧时，更新界面
@@ -65,8 +79,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &MainWindow::destroyed, worker, &DetectionWorker::stop);
     connect(this, &MainWindow::destroyed, workerThread, &QThread::quit);
     connect(workerThread, &QThread::finished, worker, &QObject::deleteLater);
-
-
 
     connect(worker, &DetectionWorker::newDetectionResult,
             this, [this](const QMap<QString, int>& results) {
@@ -77,6 +89,67 @@ MainWindow::MainWindow(QWidget *parent)
 
     // 启动检测线程
     workerThread->start();
+
+
+
+
+    // --- 新增：设置传感器线程，用于读取 DHT11 温湿度数据 ---
+    int sensorPin = 4;  // 根据你实际的接线选择正确的引脚号
+    sensorWorker = new SensorWorker(sensorPin, nullptr);
+    sensorThread = new QThread(this);
+    sensorWorker->moveToThread(sensorThread);
+    // 当线程启动时，执行传感器数据读取主循环
+    connect(sensorThread, &QThread::started, sensorWorker, &SensorWorker::process);
+    // 连接传感器数据更新信号，更新 sensorLabel 显示
+    connect(sensorWorker, &SensorWorker::newSensorData, this,
+            [this](double temperature, double humidity) {
+                QString sensorDataStr = QString("tempurature: %1 °C, humidity: %2%")
+                                            .arg(temperature, 0, 'f', 1)
+                                            .arg(humidity, 0, 'f', 1);
+                sensorLabel->setText(sensorDataStr);
+                qDebug() << "New sensor data:" << sensorDataStr;
+            });
+    // 当 MainWindow 销毁时，停止传感器线程
+    connect(this, &MainWindow::destroyed, sensorWorker, &SensorWorker::stop);
+    connect(this, &MainWindow::destroyed, sensorThread, &QThread::quit);
+    connect(sensorThread, &QThread::finished, sensorWorker, &QObject::deleteLater);
+    // 启动传感器线程
+    sensorThread->start();
+
+     // 新建 GPIOSwitch 对象，使用 GPIO 线号 17（如果你实际接线不同，请修改此值）
+    // 这里传入 nullptr 作为父对象，以便后续 moveToThread（避免父对象冲突）
+    gpioSwitch = new GPIOSwitch(17, nullptr);
+    // 新建专用线程，并将 gpioSwitch 移动到该线程中
+    gpioThread = new QThread(this);
+    gpioSwitch->moveToThread(gpioThread);
+
+    // 连接 gpioThread 启动信号，让 gpioSwitch 开始监控
+    connect(gpioThread, &QThread::started, gpioSwitch, &GPIOSwitch::process);
+
+    // 连接 GPIOSwitch 发出的冰箱状态改变信号到 MainWindow 的槽
+    // 当开关状态改变时，设置堆叠窗口的显示页面，并在关门时调用 updateSecondPageTable()
+    connect(gpioSwitch, &GPIOSwitch::fridgeStateChanged,
+    this, [this](bool open) {
+        if (open) {
+            // 当冰箱门打开时显示检测页面
+            stackedWidget->setCurrentIndex(0);
+        } else {
+            // 当冰箱门关闭时显示第二页面并更新数据
+            stackedWidget->setCurrentIndex(1);
+            updateSecondPageTable();
+        }
+        qDebug() << "Fridge state from GPIO:" << (open ? "Open" : "Closed");
+    });
+
+
+
+
+    // 在 MainWindow 销毁时确保停止 gpioSwitch 线程
+    connect(this, &MainWindow::destroyed, gpioSwitch, &GPIOSwitch::stop);
+    connect(this, &MainWindow::destroyed, gpioThread, &QThread::quit);
+    connect(gpioThread, &QThread::finished, gpioSwitch, &QObject::deleteLater);
+    // 启动 GPIO 监控线程
+    gpioThread->start();
 }
 
 MainWindow::~MainWindow()
@@ -86,6 +159,18 @@ MainWindow::~MainWindow()
         worker->stop();
         workerThread->quit();
         workerThread->wait();
+    }
+     // 停止传感器线程
+     if (sensorThread->isRunning()) {
+        sensorWorker->stop();
+        sensorThread->quit();
+        sensorThread->wait();
+    }
+    // 停止 GPIO 监控线程
+    if (gpioThread->isRunning()) {
+        gpioSwitch->stop();
+        gpioThread->quit();
+        gpioThread->wait();
     }
 }
 

@@ -15,12 +15,12 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 
 # Add ONNX Runtime (modify this path to match your environment)
 # set(ONNXRUNTIME_DIR "/path/to/onnxruntime") # optionally define if not system-installed
-find_path(ONNXRUNTIME_INCLUDE_DIR onnxruntime_c_api.h)
-find_library(ONNXRUNTIME_LIB onnxruntime)
+# find_path(ONNXRUNTIME_INCLUDE_DIR onnxruntime_c_api.h)
+# find_library(ONNXRUNTIME_LIB onnxruntime)
 
-if(NOT ONNXRUNTIME_INCLUDE_DIR OR NOT ONNXRUNTIME_LIB)
-    message(FATAL_ERROR "ONNX Runtime not found. Please install it and set ONNXRUNTIME_INCLUDE_DIR / ONNXRUNTIME_LIB.")
-endif()
+# if(NOT ONNXRUNTIME_INCLUDE_DIR OR NOT ONNXRUNTIME_LIB)
+#    message(FATAL_ERROR "ONNX Runtime not found. Please install it and set ONNXRUNTIME_INCLUDE_DIR / ONNXRUNTIME_LIB.")
+# endif()
 
 # Source files
 set(SOURCES
@@ -46,11 +46,11 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
-    ${ONNXRUNTIME_LIB}
+#    ${ONNXRUNTIME_LIB}
 )
 
 # Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE
-    ${ONNXRUNTIME_INCLUDE_DIR}
+#    ${ONNXRUNTIME_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
 )

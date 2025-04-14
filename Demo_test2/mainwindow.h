@@ -10,6 +10,8 @@
 #include <QString>
 #include "DetectionWorker.h"  // 用于果蔬检测的工作线程封装
 #include "secondpage.h"       // 第二界面
+#include "SensorWorker.h"
+#include "GPIOSwitch.h"
 
 class MainWindow : public QMainWindow
 {
@@ -33,6 +35,7 @@ private:
     // 用于果蔬检测的多线程部分
     QThread *workerThread;
     DetectionWorker *worker;
+   
 
     // 用于在第一界面中显示摄像头检测结果的标签
     QLabel *detectionLabel;
@@ -43,6 +46,18 @@ private:
 private:
     // 用于保存水果记录（键为水果类别，值为 <放入时间, 过期时间>）
     QMap<QString, QPair<QDateTime, QDateTime>> m_fruitTimeRecords;
+
+private:
+    SensorWorker *sensorWorker;
+    QThread *sensorThread;
+    QLabel *sensorLabel; // 用于显示温湿度数据
+
+// 在 MainWindow 的 private 部分加入：
+private:
+    // 原有成员……
+    // 新增：控制冰箱门状态的 GPIO 开关部分
+    GPIOSwitch *gpioSwitch;
+    QThread *gpioThread;
 
 };
 
