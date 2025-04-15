@@ -118,7 +118,12 @@ make
 ```
 ## 🧩 Display
 
+### When the fruit appears under the camera, the detection results will be displayed in real time.
 
+<p align="center">
+  <img src="images/apple.png" width="250"/><br>
+  <strong>Detection Result</strong>
+</p>
 
 
 
