@@ -8,6 +8,7 @@
 #include "fruitvegdetect.h"
 #include <QMap>
 #include <QString>
+#include "FrameGrabber.h"
 
 /*
  * DetectionWorker 封装了果蔬检测工作流程，放在子线程中执行。

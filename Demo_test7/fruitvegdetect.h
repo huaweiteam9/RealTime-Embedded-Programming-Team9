@@ -35,7 +35,7 @@ public:
 
     // 获取当前检测后的帧；处理成功返回 true，并将结果存入 frame 中，否则返回 false
    // bool getDetectionFrame(Mat &frame);
-      bool getDetectionFrame(Mat &frame, QMap<QString, int> &detectionResults);
+    bool getDetectionFrame(Mat &frame, QMap<QString, int> &detectionResults);
 private:
     VideoCapture cap;     // 摄像头捕获对象
     Net net;              // DNN 网络模型

@@ -10,6 +10,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QTextStream>
+#include "FrameGrabber.h"
 
 
 
