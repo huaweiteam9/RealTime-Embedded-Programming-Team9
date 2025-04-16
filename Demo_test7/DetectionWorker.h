@@ -13,13 +13,14 @@
 /*
  * DetectionWorker 封装了果蔬检测工作流程，放在子线程中执行。
  */
+
+class FrameGrabber;
 class DetectionWorker : public QObject
 {
     Q_OBJECT
 
 public:
-    // 新增方法：设置 FrameGrabber
-    void setFrameGrabber(FrameGrabber* grabber) { m_frameGrabber = grabber; }
+    
     // ---- 关键之处：新增一个带模型参数的构造函数 ----
     explicit DetectionWorker(const std::string &modelPath,
                              int cameraID,
@@ -32,7 +33,8 @@ public:
 
     // 停止线程循环
     void stop();
-
+    // 新增方法：设置 FrameGrabber
+    void setFrameGrabber(FrameGrabber* grabber) { m_frameGrabber = grabber; }
 signals:
     // 每当获取到新的一帧后，发送 QImage 给主线程
     void newFrame(const QImage &frame);

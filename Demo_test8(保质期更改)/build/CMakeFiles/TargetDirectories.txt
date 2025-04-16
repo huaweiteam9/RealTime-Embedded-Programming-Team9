@@ -1,0 +1,4 @@
+/home/admin/RealTime-Embedded-Programming-Team9/Demo_test3/build/CMakeFiles/demo_02.dir
+/home/admin/RealTime-Embedded-Programming-Team9/Demo_test3/build/CMakeFiles/edit_cache.dir
+/home/admin/RealTime-Embedded-Programming-Team9/Demo_test3/build/CMakeFiles/rebuild_cache.dir
+/home/admin/RealTime-Embedded-Programming-Team9/Demo_test3/build/CMakeFiles/demo_02_autogen.dir
