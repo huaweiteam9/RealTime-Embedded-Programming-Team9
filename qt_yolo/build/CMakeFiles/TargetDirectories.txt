@@ -1,4 +1,0 @@
-/home/admin/RealTime-Embedded-Programming-Team9/qt_yolo/build/CMakeFiles/qt_yolo.dir
-/home/admin/RealTime-Embedded-Programming-Team9/qt_yolo/build/CMakeFiles/edit_cache.dir
-/home/admin/RealTime-Embedded-Programming-Team9/qt_yolo/build/CMakeFiles/rebuild_cache.dir
-/home/admin/RealTime-Embedded-Programming-Team9/qt_yolo/build/CMakeFiles/qt_yolo_autogen.dir
