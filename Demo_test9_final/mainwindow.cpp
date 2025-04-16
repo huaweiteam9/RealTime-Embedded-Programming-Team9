@@ -131,7 +131,7 @@ void MainWindow::startDetection()
 
     // Creating a new detection thread and detection object
     workerThread = new QThread(this);
-    // Note the use of your actual model paths and parameters here
+    
     worker = new DetectionWorker("best.onnx", 0, 640, 640, 0.7f, 0.45f);
     // Moving the detection object to the thread
     worker->moveToThread(workerThread);
@@ -146,7 +146,7 @@ void MainWindow::startDetection()
                 m_latestDetectionResults = results;
                 qDebug() << "Updated detection results:" << m_latestDetectionResults;
             });
-    // When MainWindow closes, make sure the detection thread stops and cleans up the
+    // When MainWindow closes, make sure the detection thread stops and cleans up the threads
     connect(this, &MainWindow::destroyed, worker, &DetectionWorker::stop);
     connect(this, &MainWindow::destroyed, workerThread, &QThread::quit);
     connect(workerThread, &QThread::finished, worker, &QObject::deleteLater);
@@ -166,7 +166,7 @@ void MainWindow::stopDetection()
             workerThread->wait();
         }
         // Clean up detection threads and objects
-        delete workerThread;  // Since we set MainWindow to be the parent, deleting the workerThread will also delete the internal children, but here the worker is already deleted by the finished signal.
+        delete workerThread;  // Since we set MainWindow to be the parent, deleting the workerThread will also delete the internal subclass, but here the worker is already deleted by the finished signal.
         workerThread = nullptr;
         worker = nullptr;
         qDebug() << "Detection stopped (camera released)";
@@ -236,7 +236,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // --- Setting up inspection threads for camera capture and fruit and vegetable inspection ---
     workerThread = new QThread(this);
-    // Please make sure that the path passed in here is the path to your actual model file.
+   
     worker = new DetectionWorker("best.onnx", 0, 640, 640, 0.7f, 0.45f);
     worker->moveToThread(workerThread);
     connect(workerThread, &QThread::started, worker, &DetectionWorker::process);
@@ -261,7 +261,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     // --- Added: Set up sensor thread for reading DHT11 temperature and humidity data ---
-    int sensorPin = 4;  // 根据你实际的接线选择正确的引脚号
+    int sensorPin = 4;  
     sensorWorker = new SensorWorker(sensorPin, nullptr);
     sensorThread = new QThread(this);
     sensorWorker->moveToThread(sensorThread);

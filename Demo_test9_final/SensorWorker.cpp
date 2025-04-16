@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <gpiod.h>
 
-// Here's a simple wrapper for the DHT11 class, which you can choose to directly reference your existing code
+
 class DHT11 {
 public:
     DHT11(int pin) : pin_number(pin) {
@@ -68,7 +68,7 @@ private:
 SensorWorker::SensorWorker(int sensorPin, QObject *parent)
     : QObject(parent), m_sensorPin(sensorPin), m_running(true)
 {
-    // You can do initialisation operations here, such as checking whether the GPIOs are active or not.
+   
     qDebug() << "SensorWorker initialized on pin" << sensorPin;
 }
 
@@ -83,7 +83,7 @@ void SensorWorker::stop()
 
 void SensorWorker::process()
 {
-    // In order to avoid duplicate creation, you can consider the DHT11 instance as a member variable if needed, and here we simply use local variable
+
     while (m_running) {
         try {
             DHT11 sensor(m_sensorPin);
