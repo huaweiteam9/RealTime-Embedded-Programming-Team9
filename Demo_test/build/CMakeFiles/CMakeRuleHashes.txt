@@ -1,2 +1,0 @@
-# Hashes of file build rules.
-36f9cafced7450ea369045314ae4473d CMakeFiles/FruitCameraEnglish_autogen
