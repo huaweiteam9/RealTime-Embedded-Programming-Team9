@@ -107,6 +107,7 @@ sudo apt install cmake
 
  ```bash 
 mkdir build
+cp best.onnx build/
 cd build
 cmake ..
 make
