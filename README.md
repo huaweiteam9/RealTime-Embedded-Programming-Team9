@@ -139,7 +139,7 @@ make
 
 ### Here is our tiktok link, where we documented the process of completing the entire project.
 
-[tiktok_link_foliage]([https://www.tiktok.com/@foliage419?_t=ZN-8vaBg5RbNJa&_r=1](https://www.tiktok.com/@glasgow_rtep_team09?is_from_webapp=1&sender_device=pc))  
+[tiktok_link_foliage]([https://www.tiktok.com/@foliage419?_t=ZN-8vaBg5RbNJa&_r=1](https://www.tiktok.com/@glasgow_rtep_team09?is_from_webapp=1&sender_device=pc)  
 
 ---
 
