@@ -174,15 +174,3 @@ make
 
 
 
-[1]L. Panoff, “How Long Do Apples Last?,” Healthline, Feb. 05, 2020. https://www.healthline.com/nutrition/how-long-do-apples-last#shelf-life (accessed Apr. 16, 2025).
-[2]“Storage Life of Vegetables,” SDSU Extension, Nov. 2021. https://extension.sdstate.edu/storage-life-vegetables#:~:text=Beets%20Cool%20and%20Humid%C2%A0%2032,1%20week (accessed Apr. 16, 2025).
-[3]N. Sharma, “How to Store Carrots So They Last for Months,” Food52, Feb. 26, 2021. https://food52.com/blog/26003-how-to-store-carrots?srsltid=AfmBOoqirJHQLkB7ObgdbNIswDIwoUN3hbny6EpOOGWTor-JIzXSoQE1#:~:text=What%E2%80%99s%20the%20Best%20Way%20to,Store%20Carrots (accessed Apr. 16, 2025).
-[4]https://www.facebook.com/allrecipes, “How to Store Grapes to Keep Them Fresh,” Allrecipes, 2021. https://www.allrecipes.com/article/how-to-store-grapes/#:~:text=It%20depends%20on%20how%20you,lose%20their%20crispness%20more%20quickly (accessed Apr. 16, 2025).
-[5]A. Skaria, “How Long Do Lemons Last? A Guide for Long-Lasting Lemons & Juice,” US Citrus, Aug. 31, 2020. https://uscitrus.com/blogs/citrus-delight-blog/how-long-do-lemons-last-a-guide-for-long-lasting-lemons-juice?srsltid=AfmBOoqd1rX1BJA1IGgzbGWDatxAJEgwbe9LKhW_RmtWSV7_51fNY2lI#:~:text=The%20life%20of%20a%20lemon,last%20for%20a%20few%20days (accessed Apr. 16, 2025).
-[6]https://www.facebook.com/marthastewart, “How to Store Mangoes the Right Way, According to Fruit Pros,” Martha Stewart, 2024. https://www.marthastewart.com/how-to-store-mangoes-8644687#:~:text=Our%20experts%20agree%20that%20you,counter%20is%20perfect%2C%20he%20says (accessed Apr. 16, 2025).
-[7]“Bulletin #4135, Storage Conditions: Fruits and Vegetables - Cooperative Extension Publications - University of Maine Cooperative Extension,” Cooperative Extension Publications, May 23, 2024. https://extension.umaine.edu/publications/4135e/#:~:text=Cabbage%2C%20Chinese%2032%2095%E2%80%93100%202%E2%80%933,5 (accessed Apr. 16, 2025).
-[8]https://www.facebook.com/allrecipes, “How to Store Peaches So They Last Longer (And Taste Their Best),” Allrecipes, 2023. https://www.allrecipes.com/how-to-store-fresh-peaches-7494995#:~:text=plastic%20bag%2C%20says%20Jenny%20Friedman%2C,the%20produce%20drawer%2C%E2%80%9D%20she%20explains (accessed Apr. 16, 2025).
-[9]“Storage Life of Vegetables,” SDSU Extension, Nov. 2021. https://extension.sdstate.edu/storage-life-vegetables#:~:text=Peas%20Cool%20and%20Humid%C2%A0%2032,2%20weeks (accessed Apr. 16, 2025).
-[10]“Storage Life of Vegetables,” SDSU Extension, Nov. 2021. https://extension.sdstate.edu/storage-life-vegetables#:~:text=Potatoes%20Humid%2045%E2%84%89%2095%25%202,2%20weeks (accessed Apr. 16, 2025).
-
-
