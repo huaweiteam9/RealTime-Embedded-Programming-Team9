@@ -12,25 +12,36 @@ In our daily life,improper storage and forgotten food often cause uncertainty ab
 
 ### **- Device**
 
-<p align="center">
-  <img src="images/Raspberry.png" width="250"/><br>
-  <strong>Raspberry Pi 5</strong>
-</p>
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="images/Raspberry.png" width="200"/><br>
+      <strong>Raspberry Pi 5</strong>
+    </td>
+    <td align="center">
+      <img src="images/camera.jpg" width="200"/><br>
+      <strong>External Raspberry Camera</strong>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="images/switch.jpg" width="200"/><br>
+      <strong>Switch (KW11-B, 20×10×6.5mm)</strong>
+    </td>
+    <td align="center">
+      <img src="images/sensor.jpg" width="200"/><br>
+      <strong>Temperature and Humidity Sensor (DHT11)</strong>
+    </td>
+  </tr>
+</table>
+
+
+## Hardware Connection Diagram
 
 <p align="center">
-  <img src="images/camera.jpg" width="250"/><br>
-  <strong>External Raspberry Camera</strong>
+  <img src="images/hardware.jpg" width="250"/><br>
 </p>
 
-<p align="center">
-  <img src="images/switch.jpg" width="250"/><br>
-  <strong>Switch (KW11-B, 20×10×6.5mm)</strong>
-</p>
-
-<p align="center">
-  <img src="images/sensor.jpg" width="250"/><br>
-  <strong>Temperature and Humidity Sensor(DHT11)</strong>
-</p>
 
 ---
 
