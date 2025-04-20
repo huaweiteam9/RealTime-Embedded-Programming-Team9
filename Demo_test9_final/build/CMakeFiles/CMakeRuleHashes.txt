@@ -1,0 +1,2 @@
+# Hashes of file build rules.
+436acba51b67e2ded74ba9535d192fb7 CMakeFiles/FridgeManager_autogen

@@ -261,7 +261,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     // --- Added: Set up sensor thread for reading DHT11 temperature and humidity data ---
-    int sensorPin = 4;  
+    int sensorPin = 26;  
     sensorWorker = new SensorWorker(sensorPin, nullptr);
     sensorThread = new QThread(this);
     sensorWorker->moveToThread(sensorThread);
