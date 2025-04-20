@@ -137,9 +137,29 @@ make
 
 ## 🧩 Social Media
 
-### Here is our tiktok link, where we documented the process of completing the entire project.
+<p align="center">
+  <img src="https://img.shields.io/badge/TikTok-%40glasgow__rtep__team09-black?logo=tiktok&style=for-the-badge" alt="TikTok Badge">
+</p>
 
-[tiktok_link_foliage]([https://www.tiktok.com/@foliage419?_t=ZN-8vaBg5RbNJa&_r=1](https://www.tiktok.com/@glasgow_rtep_team09?is_from_webapp=1&sender_device=pc)  
+<p align="center">
+  🎥 <strong>Watch our full project journey on TikTok:</strong><br>
+  <a href="https://www.tiktok.com/@glasgow_rtep_team09?is_from_webapp=1&sender_device=pc">
+    https://www.tiktok.com/@glasgow_rtep_team09
+  </a>
+</p>
+
+---
+
+## 🧩 Authors
+
+| Member         | Contribution                                   |
+|----------------|------------------------------------------------|
+| Chen Wei       | Camera,open cv,yolo and Project Integratio     |
+| Hanxi Lu       | Camera,open cv,yolo and Project Integratio     |
+| Shule Chong    | Cmakelists and README part                     |
+| Zhongyuan Peng | Sensor and Social media part                   |
+| Zheyu Gao      | Qt part                                        |
+
 
 ---
 
