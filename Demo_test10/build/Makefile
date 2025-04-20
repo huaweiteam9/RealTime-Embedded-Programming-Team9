@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/admin/RealTime-Embedded-Programming-Team9/Demo_test3
+CMAKE_SOURCE_DIR = /home/lelona/Documents/RealTime-Embedded-Programming-Team9/Demo_test10
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/admin/RealTime-Embedded-Programming-Team9/Demo_test3/build
+CMAKE_BINARY_DIR = /home/lelona/Documents/RealTime-Embedded-Programming-Team9/Demo_test10/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/admin/RealTime-Embedded-Programming-Team9/Demo_test3/build/CMakeFiles /home/admin/RealTime-Embedded-Programming-Team9/Demo_test3/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/lelona/Documents/RealTime-Embedded-Programming-Team9/Demo_test10/build/CMakeFiles /home/lelona/Documents/RealTime-Embedded-Programming-Team9/Demo_test10/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/admin/RealTime-Embedded-Programming-Team9/Demo_test3/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/lelona/Documents/RealTime-Embedded-Programming-Team9/Demo_test10/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -117,37 +117,37 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named demo_02
+# Target rules for targets named FridgeManager
 
 # Build rule for target.
-demo_02: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 demo_02
-.PHONY : demo_02
+FridgeManager: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FridgeManager
+.PHONY : FridgeManager
 
 # fast build rule for target.
-demo_02/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/build
-.PHONY : demo_02/fast
+FridgeManager/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/build
+.PHONY : FridgeManager/fast
 
 #=============================================================================
-# Target rules for targets named demo_02_autogen
+# Target rules for targets named FridgeManager_autogen
 
 # Build rule for target.
-demo_02_autogen: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 demo_02_autogen
-.PHONY : demo_02_autogen
+FridgeManager_autogen: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FridgeManager_autogen
+.PHONY : FridgeManager_autogen
 
 # fast build rule for target.
-demo_02_autogen/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02_autogen.dir/build.make CMakeFiles/demo_02_autogen.dir/build
-.PHONY : demo_02_autogen/fast
+FridgeManager_autogen/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager_autogen.dir/build.make CMakeFiles/FridgeManager_autogen.dir/build
+.PHONY : FridgeManager_autogen/fast
 
 DetectionWorker.o: DetectionWorker.cpp.o
 .PHONY : DetectionWorker.o
 
 # target to build an object file
 DetectionWorker.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/DetectionWorker.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/DetectionWorker.cpp.o
 .PHONY : DetectionWorker.cpp.o
 
 DetectionWorker.i: DetectionWorker.cpp.i
@@ -155,7 +155,7 @@ DetectionWorker.i: DetectionWorker.cpp.i
 
 # target to preprocess a source file
 DetectionWorker.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/DetectionWorker.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/DetectionWorker.cpp.i
 .PHONY : DetectionWorker.cpp.i
 
 DetectionWorker.s: DetectionWorker.cpp.s
@@ -163,15 +163,39 @@ DetectionWorker.s: DetectionWorker.cpp.s
 
 # target to generate assembly for a file
 DetectionWorker.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/DetectionWorker.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/DetectionWorker.cpp.s
 .PHONY : DetectionWorker.cpp.s
+
+FridgeManager_autogen/mocs_compilation.o: FridgeManager_autogen/mocs_compilation.cpp.o
+.PHONY : FridgeManager_autogen/mocs_compilation.o
+
+# target to build an object file
+FridgeManager_autogen/mocs_compilation.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/FridgeManager_autogen/mocs_compilation.cpp.o
+.PHONY : FridgeManager_autogen/mocs_compilation.cpp.o
+
+FridgeManager_autogen/mocs_compilation.i: FridgeManager_autogen/mocs_compilation.cpp.i
+.PHONY : FridgeManager_autogen/mocs_compilation.i
+
+# target to preprocess a source file
+FridgeManager_autogen/mocs_compilation.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/FridgeManager_autogen/mocs_compilation.cpp.i
+.PHONY : FridgeManager_autogen/mocs_compilation.cpp.i
+
+FridgeManager_autogen/mocs_compilation.s: FridgeManager_autogen/mocs_compilation.cpp.s
+.PHONY : FridgeManager_autogen/mocs_compilation.s
+
+# target to generate assembly for a file
+FridgeManager_autogen/mocs_compilation.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/FridgeManager_autogen/mocs_compilation.cpp.s
+.PHONY : FridgeManager_autogen/mocs_compilation.cpp.s
 
 GPIOSwitch.o: GPIOSwitch.cpp.o
 .PHONY : GPIOSwitch.o
 
 # target to build an object file
 GPIOSwitch.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/GPIOSwitch.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/GPIOSwitch.cpp.o
 .PHONY : GPIOSwitch.cpp.o
 
 GPIOSwitch.i: GPIOSwitch.cpp.i
@@ -179,7 +203,7 @@ GPIOSwitch.i: GPIOSwitch.cpp.i
 
 # target to preprocess a source file
 GPIOSwitch.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/GPIOSwitch.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/GPIOSwitch.cpp.i
 .PHONY : GPIOSwitch.cpp.i
 
 GPIOSwitch.s: GPIOSwitch.cpp.s
@@ -187,7 +211,7 @@ GPIOSwitch.s: GPIOSwitch.cpp.s
 
 # target to generate assembly for a file
 GPIOSwitch.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/GPIOSwitch.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/GPIOSwitch.cpp.s
 .PHONY : GPIOSwitch.cpp.s
 
 SensorWorker.o: SensorWorker.cpp.o
@@ -195,7 +219,7 @@ SensorWorker.o: SensorWorker.cpp.o
 
 # target to build an object file
 SensorWorker.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/SensorWorker.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/SensorWorker.cpp.o
 .PHONY : SensorWorker.cpp.o
 
 SensorWorker.i: SensorWorker.cpp.i
@@ -203,7 +227,7 @@ SensorWorker.i: SensorWorker.cpp.i
 
 # target to preprocess a source file
 SensorWorker.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/SensorWorker.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/SensorWorker.cpp.i
 .PHONY : SensorWorker.cpp.i
 
 SensorWorker.s: SensorWorker.cpp.s
@@ -211,39 +235,15 @@ SensorWorker.s: SensorWorker.cpp.s
 
 # target to generate assembly for a file
 SensorWorker.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/SensorWorker.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/SensorWorker.cpp.s
 .PHONY : SensorWorker.cpp.s
-
-demo_02_autogen/mocs_compilation.o: demo_02_autogen/mocs_compilation.cpp.o
-.PHONY : demo_02_autogen/mocs_compilation.o
-
-# target to build an object file
-demo_02_autogen/mocs_compilation.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/demo_02_autogen/mocs_compilation.cpp.o
-.PHONY : demo_02_autogen/mocs_compilation.cpp.o
-
-demo_02_autogen/mocs_compilation.i: demo_02_autogen/mocs_compilation.cpp.i
-.PHONY : demo_02_autogen/mocs_compilation.i
-
-# target to preprocess a source file
-demo_02_autogen/mocs_compilation.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/demo_02_autogen/mocs_compilation.cpp.i
-.PHONY : demo_02_autogen/mocs_compilation.cpp.i
-
-demo_02_autogen/mocs_compilation.s: demo_02_autogen/mocs_compilation.cpp.s
-.PHONY : demo_02_autogen/mocs_compilation.s
-
-# target to generate assembly for a file
-demo_02_autogen/mocs_compilation.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/demo_02_autogen/mocs_compilation.cpp.s
-.PHONY : demo_02_autogen/mocs_compilation.cpp.s
 
 fruitvegdetect.o: fruitvegdetect.cpp.o
 .PHONY : fruitvegdetect.o
 
 # target to build an object file
 fruitvegdetect.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/fruitvegdetect.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/fruitvegdetect.cpp.o
 .PHONY : fruitvegdetect.cpp.o
 
 fruitvegdetect.i: fruitvegdetect.cpp.i
@@ -251,7 +251,7 @@ fruitvegdetect.i: fruitvegdetect.cpp.i
 
 # target to preprocess a source file
 fruitvegdetect.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/fruitvegdetect.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/fruitvegdetect.cpp.i
 .PHONY : fruitvegdetect.cpp.i
 
 fruitvegdetect.s: fruitvegdetect.cpp.s
@@ -259,7 +259,7 @@ fruitvegdetect.s: fruitvegdetect.cpp.s
 
 # target to generate assembly for a file
 fruitvegdetect.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/fruitvegdetect.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/fruitvegdetect.cpp.s
 .PHONY : fruitvegdetect.cpp.s
 
 main.o: main.cpp.o
@@ -267,7 +267,7 @@ main.o: main.cpp.o
 
 # target to build an object file
 main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/main.cpp.o
 .PHONY : main.cpp.o
 
 main.i: main.cpp.i
@@ -275,7 +275,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -283,7 +283,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 mainwindow.o: mainwindow.cpp.o
@@ -291,7 +291,7 @@ mainwindow.o: mainwindow.cpp.o
 
 # target to build an object file
 mainwindow.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/mainwindow.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/mainwindow.cpp.o
 .PHONY : mainwindow.cpp.o
 
 mainwindow.i: mainwindow.cpp.i
@@ -299,7 +299,7 @@ mainwindow.i: mainwindow.cpp.i
 
 # target to preprocess a source file
 mainwindow.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/mainwindow.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/mainwindow.cpp.i
 .PHONY : mainwindow.cpp.i
 
 mainwindow.s: mainwindow.cpp.s
@@ -307,7 +307,7 @@ mainwindow.s: mainwindow.cpp.s
 
 # target to generate assembly for a file
 mainwindow.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/mainwindow.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/mainwindow.cpp.s
 .PHONY : mainwindow.cpp.s
 
 secondpage.o: secondpage.cpp.o
@@ -315,7 +315,7 @@ secondpage.o: secondpage.cpp.o
 
 # target to build an object file
 secondpage.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/secondpage.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/secondpage.cpp.o
 .PHONY : secondpage.cpp.o
 
 secondpage.i: secondpage.cpp.i
@@ -323,7 +323,7 @@ secondpage.i: secondpage.cpp.i
 
 # target to preprocess a source file
 secondpage.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/secondpage.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/secondpage.cpp.i
 .PHONY : secondpage.cpp.i
 
 secondpage.s: secondpage.cpp.s
@@ -331,7 +331,7 @@ secondpage.s: secondpage.cpp.s
 
 # target to generate assembly for a file
 secondpage.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo_02.dir/build.make CMakeFiles/demo_02.dir/secondpage.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FridgeManager.dir/build.make CMakeFiles/FridgeManager.dir/secondpage.cpp.s
 .PHONY : secondpage.cpp.s
 
 # Help Target
@@ -342,20 +342,20 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... demo_02_autogen"
-	@echo "... demo_02"
+	@echo "... FridgeManager_autogen"
+	@echo "... FridgeManager"
 	@echo "... DetectionWorker.o"
 	@echo "... DetectionWorker.i"
 	@echo "... DetectionWorker.s"
+	@echo "... FridgeManager_autogen/mocs_compilation.o"
+	@echo "... FridgeManager_autogen/mocs_compilation.i"
+	@echo "... FridgeManager_autogen/mocs_compilation.s"
 	@echo "... GPIOSwitch.o"
 	@echo "... GPIOSwitch.i"
 	@echo "... GPIOSwitch.s"
 	@echo "... SensorWorker.o"
 	@echo "... SensorWorker.i"
 	@echo "... SensorWorker.s"
-	@echo "... demo_02_autogen/mocs_compilation.o"
-	@echo "... demo_02_autogen/mocs_compilation.i"
-	@echo "... demo_02_autogen/mocs_compilation.s"
 	@echo "... fruitvegdetect.o"
 	@echo "... fruitvegdetect.i"
 	@echo "... fruitvegdetect.s"

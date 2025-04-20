@@ -5,6 +5,7 @@
 #include <thread>
 #include <stdexcept>
 #include <gpiod.h>
+#include <QTimer>
 
 
 class DHT11 {

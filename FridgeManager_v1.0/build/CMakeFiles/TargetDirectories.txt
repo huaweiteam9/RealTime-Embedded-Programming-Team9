@@ -1,0 +1,4 @@
+/home/lelona/Documents/RealTime-Embedded-Programming-Team9/FridgeManager_v1.0/build/CMakeFiles/FridgeManager.dir
+/home/lelona/Documents/RealTime-Embedded-Programming-Team9/FridgeManager_v1.0/build/CMakeFiles/edit_cache.dir
+/home/lelona/Documents/RealTime-Embedded-Programming-Team9/FridgeManager_v1.0/build/CMakeFiles/rebuild_cache.dir
+/home/lelona/Documents/RealTime-Embedded-Programming-Team9/FridgeManager_v1.0/build/CMakeFiles/FridgeManager_autogen.dir

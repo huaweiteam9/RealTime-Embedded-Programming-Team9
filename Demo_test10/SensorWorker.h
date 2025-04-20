@@ -2,6 +2,7 @@
 #define SENSORWORKER_H
 
 #include <QObject>
+#include <QTimer>
 
 
 

@@ -7,8 +7,7 @@
 
 
 
-private:
-    QTimer* m_timer = nullptr;
+
 
 
 // ---- Constructor with parameters ----
@@ -20,7 +19,7 @@ DetectionWorker::DetectionWorker(const std::string& modelPath,
     float nmsThreshold,
     QObject* parent)
     : QObject(parent),
-    running(true),
+    m_timer(nullptr),
     m_modelPath(modelPath),
     m_cameraID(cameraID),
     m_inputWidth(inputWidth),

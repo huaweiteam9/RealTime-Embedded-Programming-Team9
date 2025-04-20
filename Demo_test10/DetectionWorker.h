@@ -8,6 +8,7 @@
 #include "fruitvegdetect.h"
 #include <QMap>
 #include <QString>
+#include <QTimer>
 
 
 class QTimer;

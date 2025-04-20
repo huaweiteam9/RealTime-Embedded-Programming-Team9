@@ -1,4 +1,4 @@
-# Install script for directory: /home/admin/RealTime-Embedded-Programming-Team9/Demo_test3
+# Install script for directory: /home/lelona/Documents/RealTime-Embedded-Programming-Team9/Demo_test10
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/admin/RealTime-Embedded-Programming-Team9/Demo_test3/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/lelona/Documents/RealTime-Embedded-Programming-Team9/Demo_test10/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
