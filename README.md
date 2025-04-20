@@ -154,11 +154,11 @@ make
 
 | Member         | Contribution                                   |
 |----------------|------------------------------------------------|
-| Chen Wei       | Camera,open cv,yolo and Project Integratio     |
-| Hanxi Lu       | Camera,open cv,yolo and Project Integratio     |
+| Chen Wei       | Open cv,yolo and Project Integratio     |
+| Hanxi Lu       | Open cv,yolo and Project Integratio     |
 | Shule Chong    | Cmakelists and README part                     |
 | Zhongyuan Peng | Sensor and Social media part                   |
-| Zheyu Gao      | Qt part                                        |
+| Zheyu Gao      | Camera and Qt part                                        |
 
 
 ---
