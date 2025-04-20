@@ -39,7 +39,7 @@ In our daily life,improper storage and forgotten food often cause uncertainty ab
 ## Hardware Connection Diagram
 
 <p align="center">
-  <img src="images/hardware.jpg" width="250"/><br>
+  <img src="images/hardware.jpg" width="350"/><br>
 </p>
 
 
@@ -133,14 +133,14 @@ make
 ### When the fruit appears under the camera, the detection results will be displayed in real time.
 
 <p align="center">
-  <img src="images/apple.png" width="250"/><br>
+  <img src="images/apple.png" width="280"/><br>
   <strong>Detection Result</strong>
 </p>
 
 ### When the switch is pressed (that is, when the refrigerator door is closed), the second interface will be displayed, showing the type of fruit identified, the date it was placed in the refrigerator, and the expiration date.
 
 <p align="center">
-  <img src="images/apple_PAGE2.png" width="250"/><br>
+  <img src="images/apple_PAGE2.png" width="380"/><br>
   <strong>Detection Result2</strong>
 </p>
 
